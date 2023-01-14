@@ -90,6 +90,22 @@ pipeline {
               }
             }
         }
+        stage('Delete Docker Images from Jenkins ') {
+            steps {
+                echo 'Docker Image Scanning Started'
+                sh 'docker rmi flipkart-ms:latest'
+                sh 'sleep 2'
+                sh 'docker rmi 13.127.62.197:8085/flipkart-ms:latest'
+                sh 'sleep 2'
+                sh 'docker rmi satyam88/flipkart-ms:latest'
+                sh 'sleep 2'
+                sh 'docker rmi 559220132560.dkr.ecr.ap-south-1.amazonaws.com/flipkart-ms:latest'
+                sh 'sleep 2'
+                echo 'Docker Image Scanning Started'
+                echo 'docker images on linux'
+                sh 'docker images'
+            }
+        }
         stage('Deploy into Kubernetes') {
             steps {
                 echo 'Docker Image Scanning Started'
