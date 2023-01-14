@@ -31,7 +31,7 @@ pipeline {
 				echo 'code packing is completed'
             }
         }
-        stage('Building  Docker Image') {
+        stage('Building & Tag Docker Image') {
             steps {
                 echo 'Starting Building Docker Image'
                 sh 'docker build -t satyam88/flipkart-ms .'
