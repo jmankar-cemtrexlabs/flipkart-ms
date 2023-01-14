@@ -24,6 +24,13 @@ pipeline {
 				echo 'code packing is completed'
             }
         }
+        stage('Code Quality Check') {
+            steps {
+                echo 'code packing is starting'
+                sh 'java --version'
+				echo 'code packing is completed'
+            }
+        }
         stage('Building  Docker Image') {
             steps {
                 echo 'Starting Building Docker Image'
@@ -70,6 +77,20 @@ pipeline {
                  }
               }
            }
+        }
+        stage('Upload Docker Image to Nexus') {
+            steps {
+                echo 'Docker Image Scanning Started'
+                sh 'java -version'
+                echo 'Docker Image Scanning Started'
+            }
+        }
+        stage('Deploy into Kubernetes') {
+            steps {
+                echo 'Docker Image Scanning Started'
+                sh 'java -version'
+                echo 'Docker Image Scanning Started'
+            }
         }
     }
 }
