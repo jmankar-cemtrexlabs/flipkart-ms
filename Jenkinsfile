@@ -26,7 +26,7 @@ pipeline {
         }
         stage('Sonarqube Code Quality') {
             environment {
-                scannerHome = tool 'qube'
+                scannerHome = tool 'sonarqube-scanner'
             }
             steps {
                 withSonarQubeEnv('sonar-server') {
