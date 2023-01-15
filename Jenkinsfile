@@ -24,11 +24,18 @@ pipeline {
 				echo 'code packing is completed'
             }
         }
-        stage('Code Quality Check') {
+        stage('Sonarqube Code Quality') {
+            environment {
+                scannerHome = tool 'qube'
+            }
             steps {
-                echo 'code packing is starting'
-                sh 'java --version'
-				echo 'code packing is completed'
+                withSonarQubeEnv('sonar-server') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                    sh 'mvn sonar:sonar'
+                }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
         stage('Building & Tag Docker Image') {
@@ -77,19 +84,19 @@ pipeline {
               }
            }
         }
-        stage('Upload the docker Image to Nexus') {
-           steps {
-              script {
-                 withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-                 sh 'docker login http://13.127.62.197:8085/repository/flipkart-ms/ -u admin -p ${PASSWORD}'
-                 echo "Push Docker Image to Nexus : In Progress"
-                 sh 'docker tag flipkart-ms 13.127.62.197:8085/flipkart-ms:latest'
-                 sh 'docker push 13.127.62.197:8085/flipkart-ms'
-                 echo "Push Docker Image to Nexus : Completed"
-                 }
-              }
-            }
-        }
+ #       stage('Upload the docker Image to Nexus') {
+ #          steps {
+ #             script {
+ #                withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+ #                sh 'docker login http://13.127.62.197:8085/repository/flipkart-ms/ -u admin -p ${PASSWORD}'
+ #                echo "Push Docker Image to Nexus : In Progress"
+ #                sh 'docker tag flipkart-ms 13.127.62.197:8085/flipkart-ms:latest'
+ #                sh 'docker push 13.127.62.197:8085/flipkart-ms'
+ #                echo "Push Docker Image to Nexus : Completed"
+ #                }
+ #             }
+ #           }
+ #       }
         stage('Delete Docker Images from Jenkins ') {
             steps {
                 echo 'Docker Image Scanning Started'
